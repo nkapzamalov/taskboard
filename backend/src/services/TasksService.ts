@@ -10,6 +10,22 @@ class TasksService {
   async findTaskById(id: number): Promise<Task> {
     return TasksRepository.getById(id);
   }
+
+  async create(    
+    title: string,
+    status: string,
+    description: string,
+    assignee: string,
+    priority: string
+  ): Promise<Task>{
+    return TasksRepository.create(
+      title,
+      status,
+      description,
+      assignee,
+      priority
+    )
+  }
 }
 
 export default new TasksService();
