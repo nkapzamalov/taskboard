@@ -1,14 +1,11 @@
 import express from "express";
-import 'dotenv/config'
-
-import { Express } from "express";
-
-import tasksRouter from "./routes/tasks.js";
+import type { Express } from "express";
+import taskRouter from "./routes/tasks.js"
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = 3000;
 
-app.use("/tasks", tasksRouter);
+app.use("/tasks", taskRouter);
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
