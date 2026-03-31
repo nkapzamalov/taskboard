@@ -1,15 +1,13 @@
 import 'dotenv/config';
-import mysql, { PoolOptions } from "mysql2/promise";
+import mysql from "mysql2/promise";
 
-const access: PoolOptions = {
+const access = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
 };
 
-const pool =  mysql.createPool(access);
+const connection = await mysql.createConnection(access);
 
-export default pool;
+export default connection;
