@@ -6,6 +6,10 @@ class TasksService {
     const tasks = await TasksRepository.getAll();
     return tasks;
   }
+
+  async findTaskById(id: number): Promise<Task> {
+    return TasksRepository.getById(id);
+  }
 }
 
 export default new TasksService();

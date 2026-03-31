@@ -7,6 +7,11 @@ class TasksController {
     const tasks = await TasksService.findAllTasks();
     return res.json(tasks);
   }
+
+  async get(req: Request, res: Response) {
+    const task = await TasksService.findTaskById(Number(req.params.id));
+    return res.json(task);
+  }
 }
 
 export default new TasksController();

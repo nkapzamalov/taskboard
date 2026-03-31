@@ -4,14 +4,18 @@ import { RowDataPacket } from "mysql2/promise";
 
 class TasksRepository {
   async getAll(): Promise<Task[]> {
-    try {
-      const [rows] = await connection.query<RowDataPacket[]>(
-        `SELECT * FROM tasks`
-      );
-      return rows as Task[];
-    } catch (error) {
-      throw error;
-    }
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT * FROM tasks`
+    );
+    return rows as Task[];
+  }
+
+  async getById(id: number): Promise<Task> {
+    const [rows] = await connection.query<RowDataPacket[]>(
+      "SELECT * FROM tasks WHERE id = ?",
+      [id]
+    );
+    return rows[0] as Task;
   }
 }
 
