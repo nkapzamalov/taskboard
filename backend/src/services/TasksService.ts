@@ -28,8 +28,12 @@ class TasksService {
   }
 
   async updateTask(id: number, updates: Partial<Task>): Promise<Task> {
-  return TasksRepository.update(id, updates);
-}
+    return TasksRepository.update(id, updates);
+  }
+
+  async deleteTask(id: number): Promise<void> {
+    return TasksRepository.delete(id);
+  }
 }
 
 export default new TasksService();

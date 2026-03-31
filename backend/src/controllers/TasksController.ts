@@ -31,6 +31,12 @@ class TasksController {
     const task = await TasksService.updateTask(Number(id), req.body);
     return res.status(200).json(task);
   }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    await TasksService.deleteTask(Number(id));
+    return res.status(204).send();
+  }
 }
 
 export default new TasksController();
