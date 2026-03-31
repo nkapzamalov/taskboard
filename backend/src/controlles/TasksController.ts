@@ -25,6 +25,12 @@ class TasksController {
 
     return res.status(201).json(task);
   }
+
+  async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const task = await TasksService.updateTask(Number(id), req.body);
+    return res.status(200).json(task);
+  }
 }
 
 export default new TasksController();

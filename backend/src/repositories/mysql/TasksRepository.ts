@@ -48,6 +48,53 @@ class TasksRepository {
       throw error;
     }
   }
+
+  async update(
+  id: number,
+  updates: Partial<Task>
+): Promise<Task> {
+  try {
+    const fields: string[] = [];
+    const values: (string | number | null)[] = [];
+
+    if (updates.title !== undefined) {
+      fields.push("title = ?");
+      values.push(updates.title);
+    }
+    if (updates.status !== undefined) {
+      fields.push("status = ?");
+      values.push(updates.status);
+    }
+    if (updates.description !== undefined) {
+      fields.push("description = ?");
+      values.push(updates.description);
+    }
+    if (updates.assignee !== undefined) {
+      fields.push("assignee = ?");
+      values.push(updates.assignee);
+    }
+    if (updates.priority !== undefined) {
+      fields.push("priority = ?");
+      values.push(updates.priority);
+    }
+
+    if (fields.length === 0) {
+      return this.getById(id);
+    }
+
+    values.push(id);
+
+    await connection.query(
+      `UPDATE tasks SET ${fields.join(", ")} WHERE id = ?`,
+      values
+    );
+
+    return await this.getById(id);
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
 }
 
 export default new TasksRepository();

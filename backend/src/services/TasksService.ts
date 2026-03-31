@@ -26,6 +26,10 @@ class TasksService {
       priority
     )
   }
+
+  async updateTask(id: number, updates: Partial<Task>): Promise<Task> {
+  return TasksRepository.update(id, updates);
+}
 }
 
 export default new TasksService();
