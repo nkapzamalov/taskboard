@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Task } from "../types";
 
-function useTasks(){
+function useFetchTasks(){
   const url = "http://localhost:3000/tasks";
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,4 +30,4 @@ function useTasks(){
   }
 }
 
-export default useTasks;
+export default useFetchTasks;

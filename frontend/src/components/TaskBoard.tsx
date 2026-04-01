@@ -1,22 +1,15 @@
 import { Link } from "react-router";
-import { groupByStatus } from "../helpers/tasks";
-import useTasks from "../hooks/useTasks";
+import { groupByStatus } from "../utils/helpers";
+import useFetchTasks from "../hooks/useFetchTasks";
 
 export default function TaskBoard() {
-  const { tasks, isLoading, error } = useTasks();
-  
-  if (isLoading) {
-    return <div className="text-black">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-black">Something went wrong. Please try again later</div>;
-  }
-
+  const { tasks, isLoading, error } = useFetchTasks();
   const groupedTasks = groupByStatus(tasks);
 
   return (
     <div className="flex flex-col gap-6 md:flex-row">
+      {isLoading && <div className="text-white">Loading...</div>}
+      {error && <div className="text-red-500">Something went wrong</div>}
       {groupedTasks.map(({ status, tasks: statusTasks }) => (
         <div
           key={status}
