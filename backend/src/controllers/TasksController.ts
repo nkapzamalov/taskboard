@@ -1,15 +1,17 @@
 import type { Request, Response } from "express";
 import TasksService from "../services/TasksService.js";
+import ResponseService from "../services/ResponseService.js";
 
 class TasksController {
   async getAll(_req: Request, res: Response) {
     const tasks = await TasksService.findAllTasks();
-    return res.json(tasks);
+    return ResponseService.ok(res, tasks);
   }
 
   async get(req: Request, res: Response) {
-    const task = await TasksService.findTaskById(Number(req.params.id));
-    return res.json(task);
+    const id = Number(req.params.id)
+    const task = await TasksService.findTaskById(id);
+    return ResponseService.ok(res, task);
   }
 
   async create(req: Request, res: Response) {
@@ -23,19 +25,19 @@ class TasksController {
       priority
     );
 
-    return res.status(201).json(task);
+    return ResponseService.created(res, task)
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const task = await TasksService.updateTask(Number(id), req.body);
-    return res.status(200).json(task);
+    return ResponseService.ok(res, task);
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
     await TasksService.deleteTask(Number(id));
-    return res.status(204).send();
+    return ResponseService.noContent(res)
   }
 }
 
