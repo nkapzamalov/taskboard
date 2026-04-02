@@ -1,0 +1,123 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const taskFormSchema = z.object({
+  title: z.string().min(1, "Title is required").min(3, "Min 3 characters"),
+  status: z.enum(["todo", "in-progress", "done"]),
+  description: z.string(),
+  assignee: z.string().min(1, "Assignee is required").min(2, "Min 2 characters"),
+  priority: z.enum(["low", "medium", "high"]),
+});
+
+type TaskFormFields = z.infer<typeof taskFormSchema>;
+
+function TaskForm() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<TaskFormFields>({
+    resolver: zodResolver(taskFormSchema),
+    defaultValues: {
+      status: "todo",
+      priority: "medium",
+    },
+  });
+
+  const onSubmit = async (data: TaskFormFields) => {
+    try {
+      await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+    } catch {
+      setError("root", {
+        message: "Something Went wrong",
+      });
+    }
+  };
+
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Create Task</h1>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
+        <div>
+          <label className="block text-sm font-medium mb-1">Title</label>
+          <input
+            type="text"
+            placeholder="Task title"
+            {...register("title")}
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
+          {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title.message}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Status</label>
+          <select
+            onChange={(e) => setValue("status", e.target.value as "todo" | "in-progress" | "done")}
+            defaultValue="todo"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          >
+            <option value="todo">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Priority</label>
+          <select
+            onChange={(e) => setValue("priority", e.target.value as "low" | "medium" | "high")}
+            defaultValue="medium"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Assignee</label>
+          <input
+            type="text"
+            placeholder="Assignee name"
+            {...register("assignee")}
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
+          {errors.assignee && <p className="text-red-600 text-sm mt-1">{errors.assignee.message}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Description (Optional)</label>
+          <textarea
+            placeholder="Task description"
+            rows={3}
+            {...register("description")}
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 disabled:opacity-50"
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </button>
+
+        {errors.root && <p className="text-red-600 text-sm">{errors.root.message}</p>}
+      </form>
+    </div>
+  );
+}
+
+export default TaskForm;
