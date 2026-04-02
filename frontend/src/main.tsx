@@ -8,25 +8,20 @@ import HomePage from './pages/HomePage';
 import TaskPage from './pages/TaskPage';
 import CreateTaskPage from './pages/CreateTaskPage';
 import EditTaskPage from './pages/EditTaskPage';
+import AppLayout from './layouts/AppLayout';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
-    errorElement: <NotFoundPage />,
+    element: <AppLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "tasks/create", element: <CreateTaskPage /> },
+      { path: "tasks/edit/:id", element: <EditTaskPage /> },
+      { path: "tasks/:id", element: <TaskPage /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
   },
-  {
-    path: "tasks/:id",
-    element: <TaskPage />,
-  },
-  {
-    path: "tasks/create",
-    element: <CreateTaskPage />
-  },
-  {
-    path: "tasks/edit/:id",
-    element: <EditTaskPage />
-  }
 ]);
 
 createRoot(document.getElementById('root')!).render(

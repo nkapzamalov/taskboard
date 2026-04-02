@@ -7,7 +7,7 @@ function TaskPage(){
   const {isLoading, error, task} = useFetchTasksById(params.id);
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <>
       {isLoading && <div className="text-white">Loading...</div>}
       {error && <div className="text-red-500">No such task</div>}
       <h1 className="text-3xl font-bold mb-8">Task </h1>
@@ -22,7 +22,7 @@ function TaskPage(){
         </Link>
       </div>
       {params.id && task && <DeleteTask id={params.id} />}
-    </div>
+    </>
   )
 }
 
