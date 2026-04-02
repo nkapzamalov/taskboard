@@ -34,7 +34,7 @@ function DeleteTask({ id }: DeleteTaskProps) {
   };
 
   return (
-    <div className="mt-6 space-y-2">
+    <div className="space-y-2">
       <button
         type="button"
         onClick={handleClick}

@@ -7,7 +7,7 @@ const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required").min(3, "Min 3 characters"),
   status: z.enum(["todo", "in-progress", "done"]),
   description: z.string(),
-  assignee: z.string().min(1, "Assignee is required").min(2, "Min 2 characters"),
+  assignee: z.string(),
   priority: z.enum(["low", "medium", "high"]),
 });
 
@@ -22,7 +22,7 @@ function TaskForm({ task }: TaskFormProps) {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitSuccessful},
   } = useForm<TaskFormFields>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: task
@@ -95,7 +95,6 @@ function TaskForm({ task }: TaskFormProps) {
           <label className="block text-sm font-medium mb-1">Status</label>
           <select
             {...register("status")}
-            defaultValue={task?.status || "todo"}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
             <option value="todo">To Do</option>
@@ -108,7 +107,6 @@ function TaskForm({ task }: TaskFormProps) {
           <label className="block text-sm font-medium mb-1">Priority</label>
           <select
             {...register("priority")}
-            defaultValue={task?.priority || "medium"}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
             <option value="low">Low</option>
@@ -154,6 +152,7 @@ function TaskForm({ task }: TaskFormProps) {
           <p className="text-red-600 text-sm">{errors.root.message}</p>
         )}
       </form>
+      {isSubmitSuccessful && <div className="text-green-500">Task Updated</div>}
     </div>
   );
 }

@@ -6,10 +6,16 @@ export default function TaskBoard() {
   const { tasks, isLoading, error } = useFetchTasks();
   const groupedTasks = groupByStatus(tasks);
 
+  if(isLoading){
+    return <div className="text-white">Loading...</div>
+  }
+
+  if(error){
+    return <div className="text-red-500">No such task</div>
+  }
+
   return (
     <div className="flex flex-col gap-6 md:flex-row">
-      {isLoading && <div className="text-white">Loading...</div>}
-      {error && <div className="text-red-500">Something went wrong</div>}
       {groupedTasks.map(({ status, tasks: statusTasks }) => (
         <div
           key={status}
