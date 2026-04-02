@@ -7,6 +7,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import HomePage from './pages/HomePage';
 import TaskPage from './pages/TaskPage';
 import CreateTaskPage from './pages/CreateTaskPage';
+import EditTaskPage from './pages/EditTaskPage';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "tasks/create",
     element: <CreateTaskPage />
+  },
+  {
+    path: "tasks/edit/:id",
+    element: <EditTaskPage />
   }
 ]);
 

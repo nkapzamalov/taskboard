@@ -1,8 +1,9 @@
-import { Link, useParams } from "react-router";
+import TaskForm from "../components/TaskForm";
 import DeleteTask from "../components/DeleteTask";
+import { useParams } from "react-router";
 import useFetchTasksById from "../hooks/useFetchTasksById";
 
-function TaskPage(){
+function EditTaskPage (){
   const params = useParams<{id: string}>();
   const {isLoading, error, task} = useFetchTasksById(params.id);
 
@@ -10,20 +11,10 @@ function TaskPage(){
     <div className="min-h-screen bg-black text-white p-8">
       {isLoading && <div className="text-white">Loading...</div>}
       {error && <div className="text-red-500">No such task</div>}
-      <h1 className="text-3xl font-bold mb-8">Task </h1>
-      <div>{task && task.title}</div>
-      <div>{task && task.description}</div>
-      <div className="mt-6 flex flex-wrap gap-4 items-center">
-        <Link
-          to={`/tasks/edit/${params.id}`}
-          className="text-blue-400 hover:underline"
-        >
-          Edit the TASK
-        </Link>
-      </div>
+      {task && <TaskForm task={task}/>}
       {params.id && task && <DeleteTask id={params.id} />}
     </div>
   )
 }
 
-export default TaskPage;
+export default EditTaskPage;

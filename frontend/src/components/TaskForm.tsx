@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import type { Task } from "../types";
 
 const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required").min(3, "Min 3 characters"),
@@ -12,40 +13,69 @@ const taskFormSchema = z.object({
 
 type TaskFormFields = z.infer<typeof taskFormSchema>;
 
-function TaskForm() {
+type TaskFormProps = {
+  task?: Task;
+};
+
+function TaskForm({ task }: TaskFormProps) {
   const {
     register,
     handleSubmit,
     setError,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<TaskFormFields>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: {
-      status: "todo",
-      priority: "medium",
-    },
+    defaultValues: task
+      ? {
+          title: task.title,
+          status: task.status,
+          description: task.description,
+          assignee: task.assignee,
+          priority: task.priority,
+        }
+      : {
+          status: "todo",
+          priority: "medium",
+        },
   });
 
   const onSubmit = async (data: TaskFormFields) => {
-    try {
-      await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-    } catch {
-      setError("root", {
-        message: "Something Went wrong",
-      });
+    if (!task) {
+      try {
+        await fetch("http://localhost:3000/tasks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        setError("root", {
+          message: "Something Went wrong",
+        });
+      }
+    } else {
+      try {
+        await fetch(`http://localhost:3000/tasks/${task.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        setError("root", {
+          message: "Something Went wrong",
+        });
+      }
     }
   };
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Create Task</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {task ? "Edit the task" : "Create a task"}
+      </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
         <div>
@@ -56,14 +86,16 @@ function TaskForm() {
             {...register("title")}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           />
-          {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title.message}</p>}
+          {errors.title && (
+            <p className="text-red-600 text-sm mt-1">{errors.title.message}</p>
+          )}
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
           <select
-            onChange={(e) => setValue("status", e.target.value as "todo" | "in-progress" | "done")}
-            defaultValue="todo"
+            {...register("status")}
+            defaultValue={task?.status || "todo"}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
             <option value="todo">To Do</option>
@@ -75,8 +107,8 @@ function TaskForm() {
         <div>
           <label className="block text-sm font-medium mb-1">Priority</label>
           <select
-            onChange={(e) => setValue("priority", e.target.value as "low" | "medium" | "high")}
-            defaultValue="medium"
+            {...register("priority")}
+            defaultValue={task?.priority || "medium"}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
             <option value="low">Low</option>
@@ -93,11 +125,15 @@ function TaskForm() {
             {...register("assignee")}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           />
-          {errors.assignee && <p className="text-red-600 text-sm mt-1">{errors.assignee.message}</p>}
+          {errors.assignee && (
+            <p className="text-red-600 text-sm mt-1">{errors.assignee.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Description (Optional)</label>
+          <label className="block text-sm font-medium mb-1">
+            Description (Optional)
+          </label>
           <textarea
             placeholder="Task description"
             rows={3}
@@ -114,7 +150,9 @@ function TaskForm() {
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
 
-        {errors.root && <p className="text-red-600 text-sm">{errors.root.message}</p>}
+        {errors.root && (
+          <p className="text-red-600 text-sm">{errors.root.message}</p>
+        )}
       </form>
     </div>
   );
