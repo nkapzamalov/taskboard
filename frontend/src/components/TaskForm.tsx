@@ -172,7 +172,11 @@ function TaskForm({ task }: TaskFormProps) {
           <p className="text-red-600 text-sm">{errors.root.message}</p>
         )}
       </form>
-      {isSubmitSuccessful && <div className="text-green-500">Task Updated</div>}
+      {isSubmitSuccessful && (
+        <div className="text-green-500">
+          {task ? "Task updated" : "Task created"}
+        </div>
+      )}
     </div>
   );
 }
