@@ -10,8 +10,11 @@ class TasksController {
   }
 
   async get(req: Request, res: Response) {
-    const id = Number(req.params.id)
+    const id = Number(req.params.id);
     const task = await TasksService.findTaskById(id);
+    if (!task) {
+      return ResponseService.notFound(res, "Task not found");
+    }
     return ResponseService.ok(res, task);
   }
 

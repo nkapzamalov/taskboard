@@ -17,12 +17,16 @@ router.get(
   ValidationResult.handle(),
   TasksController.get
 );
-router.post("/", 
+router.post(
+  "/",
+  ...ValidationCheck.taskCreateBody(),
+  ValidationResult.handle(),
   TasksController.create
 );
 router.patch(
   "/:id",
   ValidationCheck.taskId(),
+  ...ValidationCheck.taskUpdateBody(),
   ValidationResult.handle(),
   TasksController.update
 );

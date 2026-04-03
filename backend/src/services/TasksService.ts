@@ -7,27 +7,27 @@ class TasksService {
     return tasks;
   }
 
-  async findTaskById(id: number): Promise<Task> {
+  async findTaskById(id: number): Promise<Task | undefined> {
     return TasksRepository.getById(id);
   }
 
-  async create(    
+  async create(
     title: string,
-    status: string,
-    description: string,
-    assignee: string,
-    priority: string
-  ): Promise<Task>{
+    status: string | undefined,
+    description: string | undefined | null,
+    assignee: string | undefined | null,
+    priority: string | undefined
+  ): Promise<Task> {
     return TasksRepository.create(
       title,
-      status,
-      description,
-      assignee,
-      priority
-    )
+      status ?? "todo",
+      description ?? null,
+      assignee ?? null,
+      priority ?? "medium"
+    );
   }
 
-  async updateTask(id: number, updates: Partial<Task>): Promise<Task> {
+  async updateTask(id: number, updates: Partial<Task>): Promise<Task | undefined> {
     return TasksRepository.update(id, updates);
   }
 

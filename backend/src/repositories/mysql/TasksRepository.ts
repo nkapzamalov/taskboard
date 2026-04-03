@@ -17,13 +17,13 @@ class TasksRepository {
     }
   }
 
-  async getById(id: number): Promise<Task> {
+  async getById(id: number): Promise<Task | undefined> {
     try {
       const [rows] = await connection.query<RowDataPacket[]>(
         `SELECT * FROM tasks WHERE id = ?`,
         [id]
       );
-      return rows[0] as Task;
+      return rows[0] as Task | undefined;
     } catch (error) {
       console.error("Database error:", error);
       throw error;
@@ -33,8 +33,8 @@ class TasksRepository {
   async create(
     title: string,
     status: string,
-    description: string,
-    assignee: string,
+    description: string | null,
+    assignee: string | null,
     priority: string
   ): Promise<Task> {
     try {
@@ -43,8 +43,12 @@ class TasksRepository {
         VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
         [title, status, description, assignee, priority]
       );
-      
-      return await this.getById(result.insertId);
+
+      const created = await this.getById(result.insertId);
+      if (!created) {
+        throw new Error("Failed to load task after insert");
+      }
+      return created;
     } catch (error) {
       console.error("Database error:", error);
       throw error;
@@ -54,7 +58,7 @@ class TasksRepository {
   async update(
     id: number,
     updates: Partial<Task>
-  ): Promise<Task> {
+  ): Promise<Task | undefined> {
     try {
       const fields: string[] = [];
       const values: (string | number | null)[] = [];
