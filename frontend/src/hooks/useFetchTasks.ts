@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import type { ApiResponse, Task } from "../types";
 
-function useFetchTasks(){
-  const url = "http://localhost:3000/tasks";
+interface FetchTasksProps{
+  status?: "todo" | "in-progress" | "done"
+}
+
+function useFetchTasks(options?: FetchTasksProps){
+  const url = options?.status ? `http://localhost:3000/tasks?status=${options.status}` : "http://localhost:3000/tasks";
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -27,7 +31,7 @@ function useFetchTasks(){
       }
     }
     fetchTasks();
-  },[])
+  },[url])
 
   return {
     tasks,

@@ -2,8 +2,8 @@ import TasksRepository from "../repositories/mysql/TasksRepository.js";
 import { Task } from "../types/index.js";
 
 class TasksService {
-  async findAllTasks(): Promise<Task[]> {
-    const tasks = await TasksRepository.getAll();
+  async findAllTasks(status?: string): Promise<Task[]> {
+    const tasks = await TasksRepository.getAll(status);
     return tasks;
   }
 

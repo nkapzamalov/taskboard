@@ -3,11 +3,13 @@ import { Task } from "../../types/index.js";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 
 class TasksRepository {
-  async getAll(): Promise<Task[]> {
+  async getAll(status?: string): Promise<Task[]> {
     try {
-      const [rows] = await connection.query<RowDataPacket[]>(
-        `SELECT * FROM tasks`
-      );
+      const sql = status
+        ? `SELECT * FROM tasks WHERE status = ?`
+        : `SELECT * FROM tasks`;
+      const params = status ? [status] : [];
+      const [rows] = await connection.query<RowDataPacket[]>(sql, params);
       return rows as Task[];
     } catch (error) {
       console.error("Database error:", error);

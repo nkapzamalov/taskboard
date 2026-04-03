@@ -5,7 +5,10 @@ import ValidationResult from "../middleware/ValidationResult.js";
 
 const router = Router();
 
-router.get("/", 
+router.get(
+  "/",
+  ValidationCheck.taskStatusQuery(),
+  ValidationResult.handle(),
   TasksController.getAll
 );
 router.get(

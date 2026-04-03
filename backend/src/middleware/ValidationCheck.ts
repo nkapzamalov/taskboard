@@ -1,4 +1,4 @@
-import { param, body } from "express-validator";
+import { param, body, query } from "express-validator";
 
 class ValidationCheck {
   taskId() {
@@ -13,6 +13,13 @@ class ValidationCheck {
       .withMessage("Title is required")
       .isLength({ min: 1, max: 255 })
       .withMessage("Title must be between 1 and 255 characters");
+  }
+
+  taskStatusQuery() {
+    return query("status")
+      .optional()
+      .isIn(["todo", "in-progress", "done"])
+      .withMessage("Invalid status");
   }
 }
 

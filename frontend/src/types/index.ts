@@ -9,7 +9,10 @@ export interface Task {
   priority: "low" | "medium" | "high";
 }
 
-/** Mirrors `backend/src/services/ResponseService.ts` JSON bodies */
+export interface TaskFilters {
+  status?: "todo" | "in-progress" | "done",
+}
+
 export type ApiSuccessResponse<T> = {
   error: null;
   data: T;

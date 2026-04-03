@@ -3,8 +3,9 @@ import TasksService from "../services/TasksService.js";
 import ResponseService from "../services/ResponseService.js";
 
 class TasksController {
-  async getAll(_req: Request, res: Response) {
-    const tasks = await TasksService.findAllTasks();
+  async getAll(req: Request, res: Response) {
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const tasks = await TasksService.findAllTasks(status);
     return ResponseService.ok(res, tasks);
   }
 
