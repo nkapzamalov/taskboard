@@ -14,7 +14,8 @@ function useFetchTasks(options?: FetchTasksProps){
   useEffect(()=>{
     async function fetchTasks() {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
+        setError(null);
         const response = await fetch(url);
         const json = (await response.json()) as ApiResponse<Task[]>;
         if (!response.ok) {

@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 import mysql from "mysql2/promise";
 
 const access = {
@@ -8,6 +8,12 @@ const access = {
   database: process.env.DB_NAME,
 };
 
-const connection = await mysql.createConnection(access);
+/** Pool defers connections until a query runs, so the server can start if MySQL is down. */
+const pool = mysql.createPool({
+  ...access,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
 
-export default connection;
+export default pool;

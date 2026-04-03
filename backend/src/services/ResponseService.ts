@@ -47,6 +47,15 @@ class ResponseService {
     return res.status(code).json(response)
   }
 
+  internalServerError(res: Response, error: string) {
+    const code = 500;
+    const response = {
+      error,
+      data: null,
+    };
+    return res.status(code).json(response);
+  }
+
 }
 
 export default new ResponseService();
