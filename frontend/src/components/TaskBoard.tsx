@@ -1,22 +1,19 @@
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
-import { groupByStatus } from "../utils/helpers";
+import { groupByStatus, TASK_STATUS_LABELS } from "../utils/helpers";
 import useFetchTasks from "../hooks/useFetchTasks";
-import useFetchTaskCounts from "../hooks/useFetchTaskCounts";
 import TaskListFilters from "./TaskBoardFilters";
 import type { TaskFilters } from "../types";
 
 export default function TaskBoard() {
   const [status, setStatus] = useState<TaskFilters["status"]>();
   const { tasks, isLoading, error } = useFetchTasks({ status });
-  const { counts: statusCounts } = useFetchTaskCounts();
 
   const groupedTasks = useMemo(() => groupByStatus(tasks), [tasks]);
-
+  
   return (
     <>
       <TaskListFilters
-        counts={statusCounts}
         onChange={(filters) => setStatus(filters.status)}
       />
       
@@ -35,11 +32,15 @@ export default function TaskBoard() {
               key={status}
               className="min-w-0 flex-1 rounded-lg bg-gray-900 p-6"
             >
-              <ul className="space-y-3">
+              <h2 className="text-lg font-semibold text-white mb-4 pb-3 border-b border-gray-700">
+                {TASK_STATUS_LABELS[status]}
+              </h2>
+              <ul className="flex flex-col gap-5 list-none p-0 m-0">
                 {statusTasks.map((task) => (
-                  <Link key={task.id} to={`tasks/${task.id}`}>
-                    <li 
-                      className="bg-gray-800 p-3 rounded hover:bg-gray-700 transition cursor-pointer"
+                  <li key={task.id}>
+                    <Link
+                      to={`tasks/${task.id}`}
+                      className="block bg-gray-800 p-3 rounded-lg border border-gray-700/80 shadow-sm hover:bg-gray-700 hover:border-gray-600 transition cursor-pointer"
                     >
                       <p className="font-medium">{task.title}</p>
                       {task.description && (
@@ -49,8 +50,8 @@ export default function TaskBoard() {
                         <span>Priority: {task.priority}</span>
                         {task.assignee && <span>Assigned to: {task.assignee}</span>}
                       </div>
-                    </li>
-                  </Link>
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>

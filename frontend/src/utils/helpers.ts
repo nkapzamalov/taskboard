@@ -2,6 +2,15 @@ import type { Task } from "../types";
 
 export const TASK_STATUS_ORDER = ["todo", "in-progress", "done"] as const;
 
+export const TASK_STATUS_LABELS: Record<
+  (typeof TASK_STATUS_ORDER)[number],
+  string
+> = {
+  todo: "To Do",
+  "in-progress": "In Progress",
+  done: "Done",
+};
+
 export function groupByStatus(tasks: Task[]) {
   const groupedTasks: Record<string, Task[]> = {};
 

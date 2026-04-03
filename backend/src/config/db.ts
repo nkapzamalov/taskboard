@@ -8,7 +8,6 @@ const access = {
   database: process.env.DB_NAME,
 };
 
-/** Pool defers connections until a query runs, so the server can start if MySQL is down. */
 const pool = mysql.createPool({
   ...access,
   waitForConnections: true,
