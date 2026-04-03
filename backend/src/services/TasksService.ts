@@ -31,7 +31,7 @@ class TasksService {
     return TasksRepository.update(id, updates);
   }
 
-  async deleteTask(id: number): Promise<void> {
+  async deleteTask(id: number): Promise<boolean> {
     return TasksRepository.delete(id);
   }
 }

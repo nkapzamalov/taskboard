@@ -31,14 +31,19 @@ class TasksController {
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const task = await TasksService.updateTask(Number(id), req.body);
+    if (!task) {
+      return ResponseService.notFound(res, "Task not found");
+    }
     return ResponseService.ok(res, task);
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
-    await TasksService.deleteTask(Number(id));
-    return ResponseService.noContent(res)
+    const deleted = await TasksService.deleteTask(Number(id));
+    if (!deleted) {
+      return ResponseService.notFound(res, "Task not found");
+    }
+    return ResponseService.noContent(res);
   }
 }
-
 export default new TasksController();

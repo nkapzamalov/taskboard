@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import type { Task } from "../types";
+import type { ApiResponse, Task } from "../types";
 
 function useFetchTasks(){
   const url = "http://localhost:3000/tasks";
-  const [error, setError] = useState();
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -12,10 +12,16 @@ function useFetchTasks(){
       try {
         setIsLoading(true)
         const response = await fetch(url);
-        const tasks = await response.json() as Task[];
-        setTasks(tasks);
-      } catch (error: any) {
-        setError(error);
+        const json = (await response.json()) as ApiResponse<Task[]>;
+        if (!response.ok) {
+          setError(json.error);
+          return;
+        }
+        if(json.data){
+           setTasks(json.data);
+        }
+      } catch {
+        setError("Something went wrong!");
       } finally{
         setIsLoading(false)
       }

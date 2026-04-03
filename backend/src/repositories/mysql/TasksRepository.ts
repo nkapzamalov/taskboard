@@ -96,9 +96,13 @@ class TasksRepository {
     }
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<boolean> {
     try {
-      await connection.query(`DELETE FROM tasks WHERE id = ?`, [id]);
+      const [result] = await connection.query<ResultSetHeader>(
+        `DELETE FROM tasks WHERE id = ?`,
+        [id]
+      );
+      return result.affectedRows > 0;
     } catch (error) {
       console.error("Database error:", error);
       throw error;

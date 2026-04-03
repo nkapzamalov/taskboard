@@ -29,7 +29,7 @@ class ResponseService {
     return res.status(code).json(response)
   }
 
-  badRequest(res: Response, error: unknown) {
+  badRequest(res: Response, error: string) {
     const code = 400;
     const response = {
       error,
@@ -38,7 +38,7 @@ class ResponseService {
     return res.status(code).json(response);
   }
 
-  notFound(res: Response, error:any ){
+  notFound(res: Response, error: string ){
     const code = 404;
     const response = {
       error,

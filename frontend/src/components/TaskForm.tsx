@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { Task } from "../types";
+import type { ApiResponse } from "../types";
 
 const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required").min(3, "Min 3 characters"),
@@ -42,13 +43,23 @@ function TaskForm({ task }: TaskFormProps) {
   const onSubmit = async (data: TaskFormFields) => {
     if (!task) {
       try {
-        await fetch("http://localhost:3000/tasks", {
+        const response = await fetch("http://localhost:3000/tasks", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
+
         });
+        if (!response.ok) {
+          const json = (await response.json()) as ApiResponse<null>;
+          if(json.error){
+            setError("root", {
+              message: json.error,
+            });
+            return;
+          }
+        }
       } catch {
         setError("root", {
           message: "Something Went wrong",
@@ -56,13 +67,22 @@ function TaskForm({ task }: TaskFormProps) {
       }
     } else {
       try {
-        await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
         });
+        if (!response.ok) {
+          const json = (await response.json()) as ApiResponse<null>;
+          if(json.error){
+            setError("root", {
+              message: json.error,
+            });
+            return;
+          }
+        }
       } catch {
         setError("root", {
           message: "Something Went wrong",

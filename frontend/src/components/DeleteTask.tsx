@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import type { ApiResponse } from "../types";
 
 type DeleteTaskProps = {
   id: string;
@@ -7,12 +8,12 @@ type DeleteTaskProps = {
 
 function DeleteTask({ id }: DeleteTaskProps) {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleClick = async () => {
     try {
-      setIsLoading(true);
+      setIsDeleting(true);
       setError(null);
 
       const response = await fetch(`http://localhost:3000/tasks/${id}`, {
@@ -23,13 +24,18 @@ function DeleteTask({ id }: DeleteTaskProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to delete task: ${response.statusText}`);
+        const json = (await response.json()) as ApiResponse<null>;
+        if(json.error){
+          setError(json.error);
+          return;
+        }
+     
       }
-
       navigate("/");
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Unknown error"));
-      setIsLoading(false);
+    } catch {
+      setError("Something went wrong!");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -38,14 +44,14 @@ function DeleteTask({ id }: DeleteTaskProps) {
       <button
         type="button"
         onClick={handleClick}
-        disabled={isLoading}
+        disabled={isDeleting}
         className="px-4 py-2 rounded border border-red-500 text-red-400 hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? "Deleting…" : "Delete task"}
+        {isDeleting ? "Deleting…" : "Delete task"}
       </button>
       {error && (
         <p className="text-red-500 text-sm" role="alert">
-          {error.message}
+          {error}
         </p>
       )}
     </div>
