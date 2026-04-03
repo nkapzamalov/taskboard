@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import type { TaskFilters } from "../types";
+import type { TaskFilters, TaskStatusCounts } from "../types";
 
 type TaskBoardListFiltersProps = {
-    onChange: (filters: TaskFilters) => void;
-}
+  onChange: (filters: TaskFilters) => void;
+  counts: TaskStatusCounts;
+};
 
-function TaskBoardListFilters({ onChange }: TaskBoardListFiltersProps){
+function TaskBoardListFilters({ onChange, counts }: TaskBoardListFiltersProps) {
   const [status, setStatus] = useState<TaskFilters['status']>();
 
   useEffect(() => {
@@ -25,7 +26,7 @@ function TaskBoardListFilters({ onChange }: TaskBoardListFiltersProps){
           onChange={() => handleStatusChange("todo")}
           className="cursor-pointer"
         />
-        <span>To Do</span>
+        <span>To Do ({counts.todo})</span>
       </label>  
 
       <label className="flex items-center gap-2 cursor-pointer">
@@ -35,7 +36,7 @@ function TaskBoardListFilters({ onChange }: TaskBoardListFiltersProps){
           onChange={() => handleStatusChange("in-progress")}
           className="cursor-pointer"
         />
-        <span>In Progress</span>
+        <span>In Progress ({counts["in-progress"]})</span>
       </label>
 
       <label className="flex items-center gap-2 cursor-pointer">
@@ -45,7 +46,7 @@ function TaskBoardListFilters({ onChange }: TaskBoardListFiltersProps){
           onChange={() => handleStatusChange("done")}
           className="cursor-pointer"
         />
-        <span>Done</span>
+        <span>Done ({counts.done})</span>
       </label>
     </div>
   )

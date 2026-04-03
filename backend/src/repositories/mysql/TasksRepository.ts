@@ -3,6 +3,18 @@ import { Task } from "../../types/index.js";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 
 class TasksRepository {
+  async getCountsByStatus(): Promise<RowDataPacket[]> {
+    try {
+      const [rows] = await connection.query<RowDataPacket[]>(
+        `SELECT status, COUNT(*) AS cnt FROM tasks GROUP BY status`
+      );
+      return rows;
+    } catch (error) {
+      console.error("Database error:", error);
+      throw error;
+    }
+  }
+
   async getAll(status?: string): Promise<Task[]> {
     try {
       const sql = status

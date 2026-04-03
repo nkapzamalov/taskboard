@@ -1,18 +1,22 @@
 import { Link } from "react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { groupByStatus } from "../utils/helpers";
 import useFetchTasks from "../hooks/useFetchTasks";
+import useFetchTaskCounts from "../hooks/useFetchTaskCounts";
 import TaskListFilters from "./TaskBoardFilters";
 import type { TaskFilters } from "../types";
 
 export default function TaskBoard() {
   const [status, setStatus] = useState<TaskFilters["status"]>();
   const { tasks, isLoading, error } = useFetchTasks({ status });
-  const groupedTasks = groupByStatus(tasks);
+  const { counts: statusCounts } = useFetchTaskCounts();
+
+  const groupedTasks = useMemo(() => groupByStatus(tasks), [tasks]);
 
   return (
     <>
       <TaskListFilters
+        counts={statusCounts}
         onChange={(filters) => setStatus(filters.status)}
       />
       
@@ -31,7 +35,6 @@ export default function TaskBoard() {
               key={status}
               className="min-w-0 flex-1 rounded-lg bg-gray-900 p-6"
             >
-              <h2 className="text-xl font-semibold mb-4 capitalize">{status}</h2>
               <ul className="space-y-3">
                 {statusTasks.map((task) => (
                   <Link key={task.id} to={`tasks/${task.id}`}>

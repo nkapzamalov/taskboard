@@ -3,6 +3,18 @@ import TasksService from "../services/TasksService.js";
 import ResponseService from "../services/ResponseService.js";
 
 class TasksController {
+  async getCounts(_req: Request, res: Response) {
+    try {
+      const counts = await TasksService.countTasksByStatus();
+      return ResponseService.ok(res, counts);
+    } catch (err) {
+      return ResponseService.internalServerError(
+        res,
+        "An unexpected error occurred. Please try again later."
+      );
+    }
+  }
+
   async getAll(req: Request, res: Response) {
     try {
       const status =

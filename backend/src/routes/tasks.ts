@@ -5,6 +5,9 @@ import ValidationResult from "../middleware/ValidationResult.js";
 
 const router = Router();
 
+router.get("/counts", 
+  TasksController.getCounts
+);
 router.get(
   "/",
   ValidationCheck.taskStatusQuery(),

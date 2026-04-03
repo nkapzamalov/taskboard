@@ -13,6 +13,11 @@ export interface TaskFilters {
   status?: "todo" | "in-progress" | "done",
 }
 
+export type TaskStatusCounts = Record<
+  NonNullable<TaskFilters["status"]>,
+  number
+>;
+
 export type ApiSuccessResponse<T> = {
   error: null;
   data: T;
