@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useFetchTaskCounts from "../hooks/useFetchTaskCounts";
 import type { TaskFilters } from "../types";
+import ErrorMessage from "./ErrorMessage";
 
 type TaskBoardListFiltersProps = {
   onChange: (filters: TaskFilters) => void;
@@ -56,9 +57,7 @@ function TaskBoardListFilters({ onChange }: TaskBoardListFiltersProps) {
         </label>
       </div>
       {countsError && (
-        <div className="mt-2 text-sm text-red-400 bg-red-900/20 rounded px-3 py-2">
-          {countsError}
-        </div>
+        <ErrorMessage message={countsError} variant="compact" />
       )}
     </div>
   )

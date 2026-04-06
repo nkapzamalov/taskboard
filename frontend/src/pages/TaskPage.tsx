@@ -1,5 +1,7 @@
 import { Link, useParams } from "react-router";
 import DeleteTask from "../components/DeleteTask";
+import ErrorMessage from "../components/ErrorMessage";
+import Loader from "../components/Loader";
 import useFetchTasksById from "../hooks/useFetchTasksById";
 
 function TaskPage() {
@@ -7,11 +9,11 @@ function TaskPage() {
   const { isLoading, error, task } = useFetchTasksById(params.id);
 
   if (isLoading) {
-    return <div className="text-white">Loading...</div>;
+    return <Loader />;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <ErrorMessage message={error} variant="plain" />;
   }
 
   return (

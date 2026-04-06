@@ -1,4 +1,6 @@
 import TaskForm from "../components/TaskForm";
+import ErrorMessage from "../components/ErrorMessage";
+import Loader from "../components/Loader";
 import { useParams } from "react-router";
 import useFetchTasksById from "../hooks/useFetchTasksById";
 
@@ -6,12 +8,12 @@ function EditTaskPage (){
   const params = useParams<{id: string}>();
   const {isLoading, error, task} = useFetchTasksById(params.id);
 
-  if(isLoading){
-    return <div className="text-white">Loading...</div>
+  if (isLoading) {
+    return <Loader />;
   }
 
-  if(error){
-    return <div className="text-red-500">No such task</div>
+  if (error) {
+    return <ErrorMessage message={error} variant="plain" />;
   }
 
   return (

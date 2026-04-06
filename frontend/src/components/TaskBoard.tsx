@@ -4,6 +4,8 @@ import { TASK_STATUS_LABELS } from "../constants/tasks";
 import { groupByStatus } from "../utils/helpers";
 import useFetchTasks from "../hooks/useFetchTasks";
 import TaskListFilters from "./TaskBoardFilters";
+import ErrorMessage from "./ErrorMessage";
+import Loader from "./Loader";
 import type { TaskFilters } from "../types";
 
 export default function TaskBoard() {
@@ -25,15 +27,11 @@ export default function TaskBoard() {
         onChange={(filters) => setStatus(filters.status)}
       />
       
-      {error && (
-        <div className="text-red-500 p-4 bg-red-900/20 rounded">
-          {error}
-        </div>
-      )}
+      {error && <ErrorMessage message={error} />}
 
       <div className="flex flex-col gap-6 md:flex-row">
         {isLoading ? (
-          <div className="text-white w-full">Loading...</div>
+          <Loader className="w-full" />
         ) : (
           groupedTasks.map(({ status, tasks: statusTasks }) => (
             <div
