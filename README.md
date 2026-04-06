@@ -14,7 +14,7 @@ Full-stack task board: **Express + TypeScript + MySQL** API in `backend/`, **Rea
 In MySQL, create an empty database (name it whatever you will put in `.env`):
 
 ```sql
-CREATE DATABASE tasks;
+CREATE DATABASE taskboard;
 ```
 
 ### 2. Backend API
