@@ -1,1 +1,1 @@
-export const TASKS_PAGE_LIMIT = 10;
+export const TASKS_PAGE_LIMIT = 100;
