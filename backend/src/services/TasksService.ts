@@ -1,15 +1,18 @@
 import type { RowDataPacket } from "mysql2/promise";
+import {
+  DEFAULT_TASK_PRIORITY,
+  DEFAULT_TASK_STATUS,
+  TASK_STATUSES,
+} from "../constants/tasks.js";
 import TasksRepository from "../repositories/mysql/TasksRepository.js";
-import { Task } from "../types/index.js";
+import type { PaginatedTasksResult, Task } from "../types/index.js";
 
 class TasksService {
   async countTasksByStatus(): Promise<Record<string, number>> {
     const rows: RowDataPacket[] = await TasksRepository.getCountsByStatus();
-    const counts: Record<string, number> = {
-      todo: 0,
-      "in-progress": 0,
-      done: 0,
-    };
+    const counts: Record<string, number> = Object.fromEntries(
+      TASK_STATUSES.map((s) => [s, 0])
+    );
     for (const row of rows) {
       const status = row.status as string;
       if (status in counts) {
@@ -19,9 +22,12 @@ class TasksService {
     return counts;
   }
 
-  async findAllTasks(status?: string): Promise<Task[]> {
-    const tasks = await TasksRepository.getAll(status);
-    return tasks;
+  async findAllTasks(
+    status?: string,
+    limit?: string,
+    offset?: string
+  ): Promise<PaginatedTasksResult> {
+    return TasksRepository.getAll(status, limit, offset);
   }
 
   async findTaskById(id: number): Promise<Task | undefined> {
@@ -37,10 +43,10 @@ class TasksService {
   ): Promise<Task> {
     return TasksRepository.create(
       title,
-      status ?? "todo",
+      status ?? DEFAULT_TASK_STATUS,
       description ?? null,
       assignee ?? null,
-      priority ?? "medium"
+      priority ?? DEFAULT_TASK_PRIORITY
     );
   }
 

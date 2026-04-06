@@ -1,5 +1,6 @@
 import "dotenv/config";
 import mysql from "mysql2/promise";
+import { DB_POOL_CONNECTION_LIMIT } from "../constants/db.js";
 
 const access = {
   host: process.env.DB_HOST,
@@ -11,7 +12,7 @@ const access = {
 const pool = mysql.createPool({
   ...access,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: DB_POOL_CONNECTION_LIMIT,
   queueLimit: 0,
 });
 

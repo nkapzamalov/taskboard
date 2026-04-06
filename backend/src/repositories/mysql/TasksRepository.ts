@@ -1,3 +1,7 @@
+import {
+  TASKS_PAGE_DEFAULT_LIMIT,
+  TASKS_PAGE_MAX_LIMIT,
+} from "../../constants/tasksPagination.js";
 import connection from "../../config/db.js";
 import { Task } from "../../types/index.js";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
@@ -15,14 +19,76 @@ class TasksRepository {
     }
   }
 
-  async getAll(status?: string): Promise<Task[]> {
+  async getAll(status?: string, limit?: string, offset?: string) {
     try {
-      const sql = status
-        ? `SELECT * FROM tasks WHERE status = ?`
-        : `SELECT * FROM tasks`;
-      const params = status ? [status] : [];
-      const [rows] = await connection.query<RowDataPacket[]>(sql, params);
-      return rows as Task[];
+      const limitParsed = Number(limit);
+      const offsetParsed = Number(offset);
+      const limitNum = Math.min(
+        TASKS_PAGE_MAX_LIMIT,
+        Math.max(
+          1,
+          Number.isFinite(limitParsed) && limitParsed > 0
+            ? limitParsed
+            : TASKS_PAGE_DEFAULT_LIMIT
+        )
+      );
+      const offsetNum = Math.max(
+        0,
+        Number.isFinite(offsetParsed) && offsetParsed >= 0 ? offsetParsed : 0
+      );
+
+      let countSql = `SELECT COUNT(*) as total FROM tasks`;
+      const countParams: (string | number)[] = [];
+
+      if (status) {
+        countSql += ` WHERE status = ?`;
+        countParams.push(status);
+      }
+
+      const [countResult] = await connection.query<RowDataPacket[]>(
+        countSql,
+        countParams
+      );
+      const total = Number((countResult[0] as { total: number }).total);
+
+      // Keep offset within the last page so LIMIT/OFFSET only targets real rows
+      let effectiveOffset = offsetNum;
+      if (total === 0) {
+        effectiveOffset = 0;
+      } else {
+        const maxOffset =
+          Math.floor((total - 1) / limitNum) * limitNum;
+        effectiveOffset = Math.min(offsetNum, maxOffset);
+      }
+
+      let dataSql = `SELECT * FROM tasks`;
+      const dataParams: (string | number)[] = [];
+
+      if (status) {
+        dataSql += ` WHERE status = ?`;
+        dataParams.push(status);
+      }
+
+      dataSql += ` LIMIT ? OFFSET ?`;
+      dataParams.push(limitNum, effectiveOffset);
+
+      const [rows] = await connection.query<RowDataPacket[]>(dataSql, dataParams);
+
+      const nextOffset = effectiveOffset + limitNum;
+      const hasMore = nextOffset < total;
+
+      return {
+        tasks: rows as Task[],
+        pagination: {
+          limit: limitNum,
+          offset: effectiveOffset,
+          total,
+          nextOffset: hasMore ? nextOffset : null,
+          hasMore: hasMore,
+          currentPage: Math.floor(effectiveOffset / limitNum) + 1,
+          totalPages: Math.ceil(total / limitNum) || 1,
+        },
+      };
     } catch (error) {
       console.error("Database error:", error);
       throw error;

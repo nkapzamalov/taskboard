@@ -10,7 +10,7 @@ router.get("/counts",
 );
 router.get(
   "/",
-  ValidationCheck.taskStatusQuery(),
+  ...ValidationCheck.taskListQuery(),
   ValidationResult.handle(),
   TasksController.getAll
 );

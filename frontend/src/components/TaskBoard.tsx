@@ -1,13 +1,21 @@
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
-import { groupByStatus, TASK_STATUS_LABELS } from "../utils/helpers";
+import { TASK_STATUS_LABELS } from "../constants/tasks";
+import { groupByStatus } from "../utils/helpers";
 import useFetchTasks from "../hooks/useFetchTasks";
 import TaskListFilters from "./TaskBoardFilters";
 import type { TaskFilters } from "../types";
 
 export default function TaskBoard() {
   const [status, setStatus] = useState<TaskFilters["status"]>();
-  const { tasks, isLoading, error } = useFetchTasks({ status });
+  const {
+    tasks,
+    isLoading,
+    isLoadingMore,
+    error,
+    loadMore,
+    hasMore,
+  } = useFetchTasks({ status });
 
   const groupedTasks = useMemo(() => groupByStatus(tasks), [tasks]);
   
@@ -58,6 +66,19 @@ export default function TaskBoard() {
           ))
         )}
       </div>
+
+      {!isLoading && hasMore && (
+        <div className="flex justify-center mt-8">
+          <button
+            type="button"
+            onClick={() => void loadMore()}
+            disabled={isLoadingMore}
+            className="rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white border border-gray-600 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            {isLoadingMore ? "Loading…" : "Load more"}
+          </button>
+        </div>
+      )}
     </>
   );
 }

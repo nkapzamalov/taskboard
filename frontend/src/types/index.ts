@@ -29,3 +29,22 @@ export type ApiErrorResponse = {
 };
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export interface TaskPagination {
+  limit: number;
+  offset: number;
+  total: number;
+  nextOffset: number | null;
+  hasMore: boolean;
+  currentPage: number;
+  totalPages: number;
+}
+
+export interface PaginatedTasksResult {
+  tasks: Task[];
+  pagination: TaskPagination;
+}
+
+export interface FetchTasksProps {
+  status?: TaskFilters["status"];
+}

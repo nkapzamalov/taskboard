@@ -19,8 +19,12 @@ class TasksController {
     try {
       const status =
         typeof req.query.status === "string" ? req.query.status : undefined;
-      const tasks = await TasksService.findAllTasks(status);
-      return ResponseService.ok(res, tasks);
+      const limit =
+        typeof req.query.limit === "string" ? req.query.limit : undefined;
+      const offset =
+        typeof req.query.offset === "string" ? req.query.offset : undefined;
+      const result = await TasksService.findAllTasks(status, limit, offset);
+      return ResponseService.ok(res, result);
     } catch (err) {
       return ResponseService.internalServerError(
         res,

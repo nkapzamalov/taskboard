@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { TASKS_API_BASE } from "../constants/api";
 import type { ApiResponse } from "../types";
 
 type DeleteTaskProps = {
@@ -16,7 +17,7 @@ function DeleteTask({ id }: DeleteTaskProps) {
       setIsDeleting(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+      const response = await fetch(`${TASKS_API_BASE}/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -1,8 +1,10 @@
 import { param, body, query } from "express-validator";
-
-const TASK_STATUSES = ["todo", "in-progress", "done"] as const;
-const TASK_PRIORITIES = ["low", "medium", "high"] as const;
-const DESCRIPTION_MAX_LEN = 65535;
+import {
+  DESCRIPTION_MAX_LEN,
+  TASK_PRIORITIES,
+  TASK_STATUSES,
+} from "../constants/tasks.js";
+import { TASKS_PAGE_MAX_LIMIT } from "../constants/tasksPagination.js";
 
 class ValidationCheck {
   taskId() {
@@ -16,6 +18,23 @@ class ValidationCheck {
       .optional()
       .isIn(TASK_STATUSES)
       .withMessage("Invalid status");
+  }
+
+  taskListQuery() {
+    return [
+      query("status")
+        .optional()
+        .isIn(TASK_STATUSES)
+        .withMessage("Invalid status"),
+      query("limit")
+        .optional()
+        .isInt({ min: 1, max: TASKS_PAGE_MAX_LIMIT })
+        .withMessage(`limit must be between 1 and ${TASKS_PAGE_MAX_LIMIT}`),
+      query("offset")
+        .optional()
+        .isInt({ min: 0 })
+        .withMessage("offset must be a non-negative integer"),
+    ];
   }
 
   taskCreateBody() {

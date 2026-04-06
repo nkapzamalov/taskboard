@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { TASKS_API_BASE } from "../constants/api";
 import type { ApiResponse, Task } from "../types";
 
 function useFetchTasksById(id: string | undefined) {
-  const url = `http://localhost:3000/tasks/${id}`;
+  const url = `${TASKS_API_BASE}/${id}`;
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [task, setTask] = useState<Task>();

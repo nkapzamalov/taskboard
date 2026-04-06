@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TASKS_COUNTS_URL } from "../constants/api";
 import type { ApiResponse, TaskStatusCounts } from "../types";
 
 function useFetchTaskCounts() {
@@ -15,7 +16,7 @@ function useFetchTaskCounts() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch("http://localhost:3000/tasks/counts");
+        const response = await fetch(TASKS_COUNTS_URL);
         const json = (await response.json()) as ApiResponse<TaskStatusCounts>;
         if (!response.ok) {
           setError(json.error);

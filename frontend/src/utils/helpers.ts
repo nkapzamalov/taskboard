@@ -1,15 +1,7 @@
-import type { Task } from "../types";
-
-export const TASK_STATUS_ORDER = ["todo", "in-progress", "done"] as const;
-
-export const TASK_STATUS_LABELS: Record<
-  (typeof TASK_STATUS_ORDER)[number],
-  string
-> = {
-  todo: "To Do",
-  "in-progress": "In Progress",
-  done: "Done",
-};
+import type { FetchTasksProps, Task } from "../types";
+import { TASKS_API_BASE } from "../constants/api";
+import { TASKS_PAGE_LIMIT } from "../constants/tasksPagination";
+import { TASK_STATUS_ORDER } from "../constants/tasks";
 
 export function groupByStatus(tasks: Task[]) {
   const groupedTasks: Record<string, Task[]> = {};
@@ -29,4 +21,12 @@ export function groupByStatus(tasks: Task[]) {
     status,
     tasks: groupedTasks[status],
   }));
+}
+
+export function buildTasksUrl(status: FetchTasksProps["status"], offset: number) {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  params.set("limit", String(TASKS_PAGE_LIMIT));
+  params.set("offset", String(offset));
+  return `${TASKS_API_BASE}?${params.toString()}`;
 }

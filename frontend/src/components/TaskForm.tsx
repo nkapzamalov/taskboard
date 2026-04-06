@@ -1,15 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { TASKS_API_BASE } from "../constants/api";
+import {
+  DEFAULT_TASK_PRIORITY,
+  DEFAULT_TASK_STATUS,
+  TASK_PRIORITY_ORDER,
+  TASK_STATUS_ORDER,
+} from "../constants/tasks";
 import type { Task } from "../types";
 import type { ApiResponse } from "../types";
 
 const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required").min(3, "Min 3 characters"),
-  status: z.enum(["todo", "in-progress", "done"]),
+  status: z.enum(TASK_STATUS_ORDER),
   description: z.string(),
   assignee: z.string(),
-  priority: z.enum(["low", "medium", "high"]),
+  priority: z.enum(TASK_PRIORITY_ORDER),
 });
 
 type TaskFormFields = z.infer<typeof taskFormSchema>;
@@ -35,15 +42,15 @@ function TaskForm({ task }: TaskFormProps) {
           priority: task.priority,
         }
       : {
-          status: "todo",
-          priority: "medium",
+          status: DEFAULT_TASK_STATUS,
+          priority: DEFAULT_TASK_PRIORITY,
         },
   });
 
   const onSubmit = async (data: TaskFormFields) => {
     if (!task) {
       try {
-        const response = await fetch("http://localhost:3000/tasks", {
+        const response = await fetch(TASKS_API_BASE, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +74,7 @@ function TaskForm({ task }: TaskFormProps) {
       }
     } else {
       try {
-        const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        const response = await fetch(`${TASKS_API_BASE}/${task.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
