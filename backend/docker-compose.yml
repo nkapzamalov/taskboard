@@ -4,8 +4,12 @@ services:
     build: .
     ports:
       - "${APP_PORT}:3000"
-    env_file:
-      - .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      APP_PORT: 3000
     depends_on:
       - mysql
     networks:
