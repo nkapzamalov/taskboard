@@ -1,12 +1,12 @@
 import cors from "cors";
 import express from "express";
 import type { Express } from "express";
-import { CORS_ALLOWED_ORIGINS, SERVER_PORT } from "./constants/server.js";
+import { CORS_ALLOWED_ORIGINS } from "./constants/server.js";
 import taskRouter from "./routes/tasks.js";
 import ResponseService from "./services/ResponseService.js";
 
 const app: Express = express();
-const port = SERVER_PORT;
+const port = process.env.APP_PORT;
 
 app.use(
   cors({
