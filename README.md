@@ -1,58 +1,62 @@
-# Taskboard
+## Run with Docker
 
-Full-stack task board: **Express + TypeScript + MySQL** API in `backend/`, **React + Vite + Tailwind** UI in `frontend/`.
+Start the **backend first** so MySQL and the API are up before you open the UI.
 
-## Prerequisites
+### 1. Backend (API + MySQL)
 
-- **Node.js** (LTS recommended)
-- **MySQL** (8.x or compatible) running and reachable
+From the repository root:
 
-## Run locally (step by step)
+1. **Go to the backend folder**
 
-### 1. Create the database
+   ```bash
+   cd backend
+   ```
 
-In MySQL, create an empty database (name it whatever you will put in `.env`):
+2. **Create environment file**
 
-```sql
-CREATE DATABASE taskboard;
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-### 2. Backend API
+   Defaults use `APP_PORT=3000` and `DB_HOST=mysql` (the MySQL service name inside Compose). Change `APP_PORT` in `.env` only if you need another host port.
 
-```bash
-cd backend
-cp .env.example .env
-```
+3. **Ensure the `taskboard` database exists**
 
-Edit `backend/.env` and set:
+   ```sql
+   CREATE DATABASE taskboard;
+   ```
 
-| Variable        | Description |
-|-----------------|-------------|
-| `DB_HOST`       | MySQL host (e.g. `127.0.0.1`) |
-| `DB_USER`       | MySQL user |
-| `DB_PASSWORD`   | MySQL password (leave empty if none) |
-| `DB_NAME`       | Same database name you created above |
+4. **Build and start containers**
 
-Then:
+   ```bash
+   docker compose up --build -d
+   ```
 
-```bash
-npm install
-npm run migrate
-npm run seed 
-npm run dev
-```
+5. **Run migrations and seed data** (inside the `nodejs` container)
 
-The API runs at **http://localhost:3000** and allows CORS from the Vite dev app at **http://localhost:5173**.
+   ```bash
+   docker compose exec nodejs sh -c "npm run migrate && npm run seed"
+   ```
 
-### 3. Frontend
+6. **Check the API**
 
-Open a **second** terminal:
+   The API is available at `http://localhost:<APP_PORT>` (default **http://localhost:3000**).
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### 2. Frontend (Vite dev server)
 
-Vite dev app at **http://localhost:5173**
+Open a **second** terminal, from the repository root:
+
+1. **Go to the frontend folder**
+
+   ```bash
+   cd frontend
+   ```
+
+2. **Build and start the UI container**
+
+   ```bash
+   docker compose up --build
+   ```
+
+   The dev server listens on **http://localhost:5173** .
 
